@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Phone, Shield, ArrowLeft, Fingerprint, Chrome } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { Logo } from "@/components/logo";
 import { useLanguage } from "@/components/language-provider";
 import { sendOtp, verifyOtp, initiateNafath, oauthLogin } from "@/lib/auth-api";
 import { ApiError } from "@/lib/api-client";
@@ -138,9 +139,7 @@ export default function LoginPage() {
         >
           {/* Header */}
           <motion.div variants={fadeUp} className="text-center mb-10">
-            <Link href="/" className="inline-block text-2xl font-light tracking-[0.3em] uppercase text-white font-[family-name:var(--font-serif)] mb-8">
-              AFAQ
-            </Link>
+            <Logo height={40} className="justify-center mb-8" />
             <h1 className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl font-extralight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 mb-3">
               {t('مرحباً بعودتك', 'Welcome Back', 'واپس خوش آمدید')}
             </h1>

@@ -4,11 +4,11 @@ import Link from "next/link";
 import { Zap, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { memo, useState, useCallback, useMemo } from "react";
-import { useLanguage, Language } from "./language-provider";
+import { useLanguage } from "./language-provider";
+import { Logo } from "./logo";
+import { LanguageSwitcher } from "./language-switcher";
+import { pickTranslation } from "@/lib/i18n";
 import { slideDown } from "@/lib/motion";
-
-const LANG_CYCLE: Language[] = ['ar', 'en', 'ur'];
-const LANG_LABELS: Record<Language, string> = { ar: 'AR', en: 'EN', ur: 'UR' };
 
 const navLinks = [
   { href: '/', ar: 'الرئيسية', en: 'Home', ur: 'ہوم' },
@@ -23,16 +23,16 @@ interface NavbarProps {
 }
 
 export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const cycleLanguage = useCallback(() => {
-    const idx = LANG_CYCLE.indexOf(language);
-    setLanguage(LANG_CYCLE[(idx + 1) % LANG_CYCLE.length]);
-  }, [language, setLanguage]);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
   const toggleMobile = useCallback(() => setMobileOpen((v) => !v), []);
+
+  const labelFor = useCallback(
+    (link: (typeof navLinks)[number]) => pickTranslation(language, link.ar, link.en, link.ur),
+    [language],
+  );
 
   const drawerFromRight = language === 'ar' || language === 'ur';
   const drawerMotion = useMemo(
@@ -51,13 +51,7 @@ export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
         className="h-[72px] flex items-center justify-between px-5 md:px-[60px] border-b border-white/5 shrink-0 bg-[#050505]/70 backdrop-blur-xl sticky top-0 z-50 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.9)]"
         {...slideDown}
       >
-        {/* Logo */}
-        <Link
-          href="/"
-          className="text-xl font-light tracking-[0.3em] uppercase text-white font-[family-name:var(--font-serif)] drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] flex-shrink-0"
-        >
-          AFAQ
-        </Link>
+        <Logo priority />
 
         {/* Desktop Nav */}
         <div className="hidden md:flex gap-8 items-center">
@@ -67,7 +61,7 @@ export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
               href={link.href}
               className="small-caps hover:text-[#165DFF] transition-colors duration-300 relative group"
             >
-              {language === 'ar' ? link.ar : language === 'ur' ? link.ur : link.en}
+              {labelFor(link)}
               <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-[#165DFF] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
             </Link>
           ))}
@@ -75,15 +69,7 @@ export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
-          {/* Language Cycler */}
-          <motion.button
-            onClick={cycleLanguage}
-            whileTap={{ scale: 0.92 }}
-            className="small-caps text-[#888] hover:text-white transition-colors duration-300 w-8 text-center tabular-nums"
-            title="Switch language"
-          >
-            {LANG_LABELS[language]}
-          </motion.button>
+          <LanguageSwitcher className="hidden sm:flex" />
 
           {/* AI Button */}
           <motion.button
@@ -141,30 +127,15 @@ export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
                       onClick={closeMobile}
                       className="flex items-center py-4 text-[#aaa] hover:text-[#165DFF] transition-colors duration-200 border-b border-white/5 text-sm tracking-widest uppercase"
                     >
-                      {language === 'ar' ? link.ar : language === 'ur' ? link.ur : link.en}
+                      {labelFor(link)}
                     </Link>
                   </motion.div>
                 ))}
               </nav>
 
-              {/* Mobile Language Switcher */}
               <div className="px-8 mt-auto pb-12">
                 <p className="small-caps text-[#444] mb-4">{t('اللغة', 'Language', 'زبان')}</p>
-                <div className="flex gap-3">
-                  {LANG_CYCLE.map((lang) => (
-                    <button
-                      key={lang}
-                      onClick={() => { setLanguage(lang); closeMobile(); }}
-                      className={`px-4 py-2 text-xs tracking-widest uppercase transition-all duration-200 border ${
-                        language === lang
-                          ? 'border-[#165DFF] text-[#165DFF] bg-[#165DFF]/10'
-                          : 'border-white/10 text-[#666] hover:border-white/30 hover:text-white'
-                      }`}
-                    >
-                      {LANG_LABELS[lang]}
-                    </button>
-                  ))}
-                </div>
+                <LanguageSwitcher onSelect={closeMobile} />
               </div>
             </motion.div>
           </>
