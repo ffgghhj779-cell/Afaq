@@ -1,0 +1,371 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #165DFF;
+  --color-secondary: #10B981;
+  --color-secondary-muted: rgba(16, 185, 129, 0.15);
+  --color-background: #050505;
+  --color-surface: rgba(255, 255, 255, 0.02);
+  --color-on-surface: #f0f0f0;
+  --color-on-surface-variant: #aaaaaa;
+  --color-inverse-surface: #f0f0f0;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+  backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 30px 60px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.glass-dark {
+  background: rgba(22, 93, 255, 0.03);
+  backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(22, 93, 255, 0.15);
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(22, 93, 255, 0.2);
+}
+
+.stat-card {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 32px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0) 100%);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0) 40%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 100%);
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8), 0 0 40px -10px rgba(22, 93, 255, 0.1);
+  border-color: rgba(255,255,255,0.1);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.btn-primary {
+  background: #ffffff;
+  color: #000000;
+  padding: 16px 32px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 20px -10px rgba(255,255,255,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.15), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.btn-primary:hover {
+  background: #f5f5f5;
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 20px 50px -10px rgba(255,255,255,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+.btn-primary:hover::after {
+  opacity: 1;
+}
+
+.btn-primary:active {
+  transform: translateY(-1px) scale(1.005);
+}
+
+.btn-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f0f0f0;
+  padding: 16px 32px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.btn-secondary:active {
+  transform: translateY(-1px) scale(1.005);
+}
+
+/* Secondary (Emerald) Button */
+.btn-emerald {
+  background: #10B981;
+  color: #ffffff;
+  padding: 16px 32px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-emerald:hover {
+  background: #0ea572;
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 20px 50px -10px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.2);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  backdrop-filter: blur(20px);
+  transition: all 0.4s ease;
+}
+
+.glass-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.mesh-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: -2;
+  background-image: 
+    radial-gradient(at 30% 10%, rgba(22, 93, 255, 0.05) 0px, transparent 40%),
+    radial-gradient(at 80% 0%, rgba(255, 255, 255, 0.02) 0px, transparent 40%),
+    radial-gradient(at 0% 60%, rgba(22, 93, 255, 0.03) 0px, transparent 60%);
+  filter: blur(80px);
+  opacity: 0.8;
+  animation: breathe 15s ease-in-out infinite alternate;
+}
+
+.noise-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.bg-grid-faint {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+}
+
+.editorial-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(22, 93, 255, 0.3), rgba(255,255,255,0.1), transparent);
+}
+
+@keyframes breathe {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.05); opacity: 0.9; }
+}
+
+@keyframes marquee-ltr {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-rtl {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}
+
+html[dir="ltr"] .animate-marquee {
+  animation: marquee-ltr 30s linear infinite;
+}
+
+html[dir="rtl"] .animate-marquee {
+  animation: marquee-rtl 30s linear infinite;
+}
+
+.font-ar {
+  font-family: var(--font-tajawal), sans-serif;
+}
+
+.font-en {
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* Base text setups */
+.small-caps {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 600;
+  color: #888888;
+}
+
+.small-caps-primary {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 600;
+  color: #165DFF;
+}
+
+/* Elite Typography Adjustments */
+
+html[lang="ar"] .font-\\[family-name\\:var\\(--font-serif\\)\\] {
+  font-family: var(--font-tajawal) !important;
+  font-weight: 700 !important; /* Bold, confident weight for Arabic headlines */
+  line-height: 1.5 !important; /* Generous line height */
+  letter-spacing: normal !important; /* Remove tracking-tight from English */
+}
+
+html[lang="en"] .font-\\[family-name\\:var\\(--font-serif\\)\\] {
+  font-family: var(--font-serif) !important;
+  letter-spacing: -0.05em !important; /* Tight letter spacing for English headlines */
+}
+
+html[lang="ar"] .tracking-tighter, html[lang="ar"] .tracking-tight {
+  letter-spacing: 0 !important; /* Arabic doesn't usually use tight tracking */
+}
+
+html[lang="en"] .tracking-widest {
+  letter-spacing: 0.25em !important;
+}
+
+html[lang="ar"] .tracking-widest {
+  letter-spacing: 0 !important; /* remove widest tracking from arabic small caps */
+}
+
+/* ─── Bento Grid ─────────────────────────────────────────── */
+.bento-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.bento-cell {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-cell:hover {
+  z-index: 2;
+  transform: scale(1.015) translateY(-4px);
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.9), 0 0 50px -15px rgba(22,93,255,0.15);
+}
+
+/* ─── Status Indicator (Emerald dot) ─────────────────────── */
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+  animation: pulse-dot 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); }
+  50% { opacity: 0.6; box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); }
+}
+
+/* ─── Glow badge ─────────────────────────────────────────── */
+.badge-emerald {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #10B981;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ─── Shimmer animation ───────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.4) 0%,
+    rgba(255,255,255,1) 40%,
+    rgba(255,255,255,0.4) 80%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ─── Glow ring on hover for stat cards ─────────────────── */
+.stat-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 100%);
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8), 0 0 50px -15px rgba(22, 93, 255, 0.12), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.1);
+}
+
+/* ─── Glow pill ──────────────────────────────────────────── */
+.glass-pill:hover {
+  background: rgba(22, 93, 255, 0.08);
+  border-color: rgba(22, 93, 255, 0.35);
+  box-shadow: 0 0 30px rgba(22, 93, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+

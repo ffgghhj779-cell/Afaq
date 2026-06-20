@@ -1,0 +1,351 @@
+// AFAQ Platform — PostgreSQL (Production)
+// PDPL Compliant: Data residency KSA. No credit card data stored.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  USER
+  ADMIN
+  AGENT
+}
+
+enum ClientType {
+  WEB
+  MOBILE
+}
+
+enum OtpPurpose {
+  LOGIN
+  REGISTER
+  VERIFY_PHONE
+}
+
+enum SubscriptionTier {
+  BASIC
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  TRIALING
+}
+
+enum ZatcaInvoiceStatus {
+  DRAFT
+  GENERATED
+  STAMPED
+  SUBMITTED
+  CLEARED
+  REJECTED
+}
+
+enum AiAgentNode {
+  COORDINATOR
+  BUILDER
+  VISION
+  AUTOMATION
+  ZATCA
+  SUPPORT
+  QUALITY
+  MARKETING
+  SECURITY
+}
+
+enum RecruitmentStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
+// ─── AUTH DOMAIN ─────────────────────────────────────────────────────────────
+
+model User {
+  id          String    @id @default(uuid()) @db.Uuid
+  phoneNumber String?   @unique @map("phone_number") @db.VarChar(20)
+  nafathId    String?   @unique @map("nafath_id") @db.VarChar(20)
+  email       String?   @unique @db.VarChar(255)
+  name        String?   @db.VarChar(255)
+  role        UserRole  @default(USER)
+  isVerified  Boolean   @default(false) @map("is_verified")
+  locale      String    @default("ar-SA") @db.VarChar(10)
+  lastLoginAt DateTime? @map("last_login_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  refreshTokens  RefreshToken[]
+  nafathSessions NafathSession[]
+  stores         Store[]
+  subscriptions  Subscription[]
+  aiSessions     AiSession[]
+  aiLogs         AiLog[]
+  zatcaInvoices  ZatcaInvoice[]
+
+  @@map("users")
+}
+
+model OtpSession {
+  id          String     @id @default(uuid()) @db.Uuid
+  phoneNumber String     @map("phone_number") @db.VarChar(20)
+  codeHash    String     @map("code_hash") @db.VarChar(255)
+  purpose     OtpPurpose @default(LOGIN)
+  attempts    Int        @default(0)
+  maxAttempts Int        @default(5) @map("max_attempts")
+  expiresAt   DateTime   @map("expires_at")
+  verifiedAt  DateTime?  @map("verified_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  @@index([phoneNumber, expiresAt])
+  @@map("otp_sessions")
+}
+
+model RefreshToken {
+  id         String     @id @default(uuid()) @db.Uuid
+  userId     String     @map("user_id") @db.Uuid
+  tokenHash  String     @unique @map("token_hash") @db.VarChar(255)
+  clientType ClientType @default(WEB) @map("client_type")
+  deviceInfo String?    @map("device_info") @db.VarChar(500)
+  expiresAt  DateTime   @map("expires_at")
+  revokedAt  DateTime?  @map("revoked_at")
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model NafathSession {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String?   @map("user_id") @db.Uuid
+  nafathId   String    @map("nafath_id") @db.VarChar(20)
+  requestId  String    @unique @map("request_id") @db.VarChar(100)
+  status     String    @default("pending") @db.VarChar(50)
+  verifiedAt DateTime? @map("verified_at")
+  expiresAt  DateTime  @map("expires_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([nafathId])
+  @@map("nafath_sessions")
+}
+
+// ─── COMMERCE DOMAIN ─────────────────────────────────────────────────────────
+
+model SubscriptionPlan {
+  id         String           @id @default(uuid()) @db.Uuid
+  tier       SubscriptionTier @unique
+  nameAr     String           @map("name_ar") @db.VarChar(100)
+  nameEn     String           @map("name_en") @db.VarChar(100)
+  nameUr     String?          @map("name_ur") @db.VarChar(100)
+  priceSar   Int              @map("price_sar")
+  agentCount Int              @map("agent_count")
+  features   Json             @default("[]")
+  isActive   Boolean          @default(true) @map("is_active")
+  createdAt  DateTime         @default(now()) @map("created_at")
+
+  subscriptions Subscription[]
+
+  @@map("subscription_plans")
+}
+
+model Subscription {
+  id        String             @id @default(uuid()) @db.Uuid
+  userId    String             @map("user_id") @db.Uuid
+  planId    String             @map("plan_id") @db.Uuid
+  status    SubscriptionStatus @default(TRIALING)
+  startsAt  DateTime           @map("starts_at")
+  endsAt    DateTime?          @map("ends_at")
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+
+  user User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  @@index([userId])
+  @@map("subscriptions")
+}
+
+model Store {
+  id               String   @id @default(uuid()) @db.Uuid
+  ownerId          String   @map("owner_id") @db.Uuid
+  storeNameAr      String   @map("store_name_ar") @db.VarChar(255)
+  storeNameEn      String   @map("store_name_en") @db.VarChar(255)
+  crNumber         String?  @map("cr_number") @db.VarChar(20)
+  vatNumber        String?  @map("vat_number") @db.VarChar(20)
+  zatcaPhase2Ready Boolean  @default(false) @map("zatca_phase_2_ready")
+  isActive         Boolean  @default(true) @map("is_active")
+  metadata         Json?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  zatcaInvoices ZatcaInvoice[]
+
+  @@index([ownerId])
+  @@map("stores")
+}
+
+model Service {
+  id            String   @id @default(uuid()) @db.Uuid
+  titleAr       String   @map("title_ar") @db.VarChar(255)
+  titleEn       String   @map("title_en") @db.VarChar(255)
+  titleUr       String?  @map("title_ur") @db.VarChar(255)
+  descriptionAr String?  @map("description_ar") @db.Text
+  descriptionEn String?  @map("description_en") @db.Text
+  descriptionUr String?  @map("description_ur") @db.Text
+  priceLabel    String?  @map("price_label") @db.VarChar(50)
+  isActive      Boolean  @default(true) @map("is_active")
+  metadata      Json?
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("services")
+}
+
+model PortfolioItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  titleAr     String   @map("title_ar") @db.VarChar(255)
+  titleEn     String   @map("title_en") @db.VarChar(255)
+  titleUr     String?  @map("title_ur") @db.VarChar(255)
+  descAr      String?  @map("desc_ar") @db.Text
+  descEn      String?  @map("desc_en") @db.Text
+  descUr      String?  @map("desc_ur") @db.Text
+  imageUrl    String?  @map("image_url") @db.VarChar(500)
+  categoryAr  String?  @map("category_ar") @db.VarChar(100)
+  categoryEn  String?  @map("category_en") @db.VarChar(100)
+  metrics     Json?
+  sortOrder   Int      @default(0) @map("sort_order")
+  isPublished Boolean  @default(true) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("portfolio_items")
+}
+
+model RecruitmentApplication {
+  id            String            @id @default(uuid()) @db.Uuid
+  applicantName String            @map("applicant_name") @db.VarChar(255)
+  contactPhone  String            @map("contact_phone") @db.VarChar(20)
+  contactEmail  String?           @map("contact_email") @db.VarChar(255)
+  portfolioUrl  String?           @map("portfolio_url") @db.VarChar(500)
+  coverLetter   String?           @map("cover_letter") @db.Text
+  status        RecruitmentStatus @default(PENDING)
+  createdAt     DateTime          @default(now()) @map("created_at")
+
+  @@map("recruitment_applications")
+}
+
+model ContactInquiry {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(255)
+  company   String?  @db.VarChar(255)
+  email     String   @db.VarChar(255)
+  message   String   @db.Text
+  locale    String   @default("ar-SA") @db.VarChar(10)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("contact_inquiries")
+}
+
+// ─── AI ORCHESTRATOR DOMAIN ──────────────────────────────────────────────────
+
+model AiSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  locale    String   @default("ar-SA") @db.VarChar(10)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user     User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  messages AiMessage[]
+
+  @@index([userId])
+  @@map("ai_sessions")
+}
+
+model AiMessage {
+  id        String       @id @default(uuid()) @db.Uuid
+  sessionId String       @map("session_id") @db.Uuid
+  role      String       @db.VarChar(20)
+  content   String       @db.Text
+  agentNode AiAgentNode? @map("agent_node")
+  metadata  Json?
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  session AiSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("ai_messages")
+}
+
+model AiLog {
+  id               String      @id @default(uuid()) @db.Uuid
+  userId           String?     @map("user_id") @db.Uuid
+  agentNode        AiAgentNode @map("agent_node")
+  action           String      @db.VarChar(255)
+  processingTimeMs Int         @map("processing_time_ms")
+  status           String      @db.VarChar(50)
+  metadata         Json?
+  createdAt        DateTime    @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@map("ai_logs")
+}
+
+// ─── ZATCA E-INVOICING DOMAIN ────────────────────────────────────────────────
+
+model ZatcaCertificate {
+  id            String   @id @default(uuid()) @db.Uuid
+  storeId       String?  @map("store_id") @db.Uuid
+  csid          String   @db.VarChar(255)
+  certificate   String   @db.Text
+  privateKeyRef String   @map("private_key_ref") @db.VarChar(255)
+  expiresAt     DateTime @map("expires_at")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("zatca_certificates")
+}
+
+model ZatcaInvoice {
+  id                 String             @id @default(uuid()) @db.Uuid
+  storeId            String             @map("store_id") @db.Uuid
+  userId             String?            @map("user_id") @db.Uuid
+  invoiceNumber      String             @unique @map("invoice_number") @db.VarChar(50)
+  invoiceUuid        String             @unique @map("invoice_uuid") @db.Uuid
+  status             ZatcaInvoiceStatus @default(DRAFT)
+  xmlPayload         String?            @map("xml_payload") @db.Text
+  xmlHash            String?            @map("xml_hash") @db.VarChar(128)
+  cryptographicStamp String?          @map("cryptographic_stamp") @db.Text
+  qrCode             String?            @map("qr_code") @db.Text
+  zatcaResponse      Json?              @map("zatca_response")
+  totalAmount        Decimal            @map("total_amount") @db.Decimal(12, 2)
+  vatAmount          Decimal            @map("vat_amount") @db.Decimal(12, 2)
+  currency           String             @default("SAR") @db.VarChar(3)
+  issuedAt           DateTime?          @map("issued_at")
+  submittedAt        DateTime?          @map("submitted_at")
+  clearedAt          DateTime?          @map("cleared_at")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([storeId, status])
+  @@map("zatca_invoices")
+}
