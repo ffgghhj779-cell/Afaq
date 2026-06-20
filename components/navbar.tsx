@@ -51,7 +51,7 @@ export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
         className="h-[72px] flex items-center justify-between px-5 md:px-[60px] border-b border-white/5 shrink-0 bg-[#050505]/70 backdrop-blur-xl sticky top-0 z-50 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.9)]"
         {...slideDown}
       >
-        <Logo priority />
+        <Logo height={32} layout="mark" variant="dark" />
 
         {/* Desktop Nav */}
         <div className="hidden md:flex gap-8 items-center">

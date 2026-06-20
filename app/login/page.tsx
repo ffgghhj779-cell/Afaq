@@ -139,7 +139,7 @@ export default function LoginPage() {
         >
           {/* Header */}
           <motion.div variants={fadeUp} className="text-center mb-10">
-            <Logo height={40} className="justify-center mb-8" />
+            <Logo height={44} layout="compact" variant="dark" className="justify-center mb-8" />
             <h1 className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl font-extralight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 mb-3">
               {t('مرحباً بعودتك', 'Welcome Back', 'واپس خوش آمدید')}
             </h1>

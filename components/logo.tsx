@@ -1,35 +1,52 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { memo } from 'react';
+import { AfaqLogoSvg } from './afaq-logo-svg';
+
+export type LogoVariant = 'dark' | 'color';
+export type LogoLayout = 'compact' | 'mark';
 
 interface LogoProps {
   className?: string;
   height?: number;
-  priority?: boolean;
+  /** dark = all-white on transparent (default). color = original PNG lockup */
+  variant?: LogoVariant;
+  /** compact = symbol + wordmark, mark = symbol only (navbar) */
+  layout?: LogoLayout;
 }
 
 export const Logo = memo(function Logo({
   className = '',
-  height = 36,
-  priority = false,
+  height = 32,
+  variant = 'dark',
+  layout = 'mark',
 }: LogoProps) {
+  const showWordmark = layout === 'compact';
+
   return (
     <Link
       href="/"
-      className={`inline-flex items-center flex-shrink-0 ${className}`}
+      className={`inline-flex items-center flex-shrink-0 text-white ${className}`}
       aria-label="AFAQ Home"
     >
-      <Image
-        src="/logo.png"
-        alt="AFAQ"
-        width={Math.round(height * 2.8)}
-        height={height}
-        priority={priority}
-        className="h-auto w-auto max-h-[36px] md:max-h-[40px] object-contain"
-        style={{ height, width: 'auto' }}
-      />
+      {variant === 'dark' ? (
+        <AfaqLogoSvg
+          height={height}
+          showWordmark={showWordmark}
+          className="block"
+        />
+      ) : (
+        // Fallback colored lockup for light surfaces only
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src="/logo.png"
+          alt="AFAQ"
+          height={height}
+          className="h-auto w-auto object-contain"
+          style={{ height, maxHeight: height }}
+        />
+      )}
     </Link>
   );
 });
