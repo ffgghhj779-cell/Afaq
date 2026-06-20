@@ -2,9 +2,10 @@
 
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
-import { memo } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { motion } from 'motion/react';
 import { fadeUp } from '@/lib/motion';
+import { IMAGE_FALLBACK } from '@/lib/assets';
 
 interface PortfolioCardProps {
   title: string;
@@ -25,16 +26,23 @@ export const PortfolioCard = memo(function PortfolioCard({
   tag,
   priority = false,
 }: PortfolioCardProps) {
+  const [src, setSrc] = useState(image);
+
+  const handleError = useCallback(() => {
+    setSrc(IMAGE_FALLBACK);
+  }, []);
+
   return (
     <motion.div variants={fadeUp} className={`group cursor-pointer ${align}`}>
       <div className="h-72 w-full glass-panel relative overflow-hidden mb-6 transition-transform duration-500 will-change-transform group-hover:scale-[1.02]">
         <Image
-          src={image}
+          src={src}
           alt={title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority={priority}
           loading={priority ? undefined : 'lazy'}
+          onError={handleError}
           className="object-cover opacity-50 grayscale transition-[opacity,transform] duration-500 will-change-transform group-hover:opacity-80 group-hover:grayscale-0 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-500" />

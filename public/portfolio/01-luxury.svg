@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Luxury retail project">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1208"/>
+      <stop offset="50%" stop-color="#3d2a14"/>
+      <stop offset="100%" stop-color="#165DFF" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="#0a0a0a"/>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <circle cx="620" cy="140" r="180" fill="#165DFF" opacity="0.08"/>
+  <path d="M120 420 Q400 280 680 420" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2" fill="none"/>
+</svg>

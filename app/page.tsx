@@ -11,6 +11,7 @@ import { PortfolioCard } from "@/components/portfolio-card";
 import { motion } from "motion/react";
 import { useLanguage } from "@/components/language-provider";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import { PORTFOLIO_IMAGES, CTA_BACKGROUND } from "@/lib/assets";
 
 const AIAssistant = dynamic(
   () => import("@/components/ai-assistant").then((m) => ({ default: m.AIAssistant })),
@@ -26,6 +27,9 @@ const TelemetryBar = dynamic(
 const TrustBadges = dynamic(
   () => import("@/components/trust-badges").then((m) => ({ default: m.TrustBadges })),
 );
+const BrandsSection = dynamic(
+  () => import("@/components/brands-section").then((m) => ({ default: m.BrandsSection })),
+);
 
 export default function Page() {
   const { t } = useLanguage();
@@ -35,12 +39,12 @@ export default function Page() {
 
   const projects = useMemo(
     () => [
-      { title: t('العربية للعود الفاخرة', 'Arabian Oud Luxury', 'عریبین عود لگژری'), desc: t('تم الإطلاق في 48 ساعة، زيادة المبيعات 45% باستخدام وكيل AFAQ البصري.', 'Launched in 48h, 45% sales increase using AFAQ Vision Agent.', '48 گھنٹوں میں لانچ، AFAQ ویژن ایجنٹ کا استعمال کرتے ہوئے 45% فروخت میں اضافہ۔'), image: 'https://images.unsplash.com/photo-1595425970377-c9703c48657a?q=80&w=800&auto=format&fit=crop', id: '01', align: 'translate-y-0', tag: t('تجارة فاخرة', 'Luxury Retail', 'لگژری ریٹیل') },
-      { title: t('أزياء نون للأناقة', 'Noon Fashion Elegance', 'نون فیشن'), desc: t('تكامل كامل مع زاتكا وبوابات الدفع، رفع معدل التحويل إلى 32%.', 'Full ZATCA & Payment Gateway integration, 32% conversion uplift.', 'مکمل ZATCA اور پیمنٹ گیٹ وے انٹیگریشن، 32% تبدیلی میں اضافہ۔'), image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=800&auto=format&fit=crop', id: '02', align: 'lg:translate-y-12', tag: t('أزياء', 'Fashion', 'فیشن') },
-      { title: t('منصة ساكو التقنية', 'SACO Tech Platform', 'SACO ٹیک پلیٹ فارم'), desc: t('خوادم سحابية مخصصة للتحمل العالي، بزمن استجابة 200 ملي ثانية.', 'Custom high-load cloud with 200ms response time.', 'کسٹم ہائی لوڈ کلاؤڈ، 200 ملی سیکنڈ ریسپانس ٹائم۔'), image: 'https://images.unsplash.com/photo-1550009158-9ffcb5e4d284?q=80&w=800&auto=format&fit=crop', id: '03', align: 'lg:-translate-y-8', tag: t('تقنية', 'Technology', 'ٹیکنالوجی') },
-      { title: t('تطبيق هوم سنتر', 'Homecentre App', 'ہوم سنٹر ایپ'), desc: t('تطبيق أداء سلس بمسار تسوق مبسط وتحليل سلوكي آني.', 'Streamlined shopping funnel with real-time behavioural analytics.', 'آسان شاپنگ فنل اور ریئل ٹائم رویے کا تجزیہ۔'), image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?q=80&w=800&auto=format&fit=crop', id: '04', align: 'translate-y-0', tag: t('تجزئة', 'Retail', 'ریٹیل') },
-      { title: t('وكالة الرياض للسفر', 'Riyadh Travel Agency', 'ریاض ٹریول ایجنسی'), desc: t('دمج تقنيات الـ AI لتقديم اقتراحات مخصصة لرحلات العملاء.', 'AI-powered personalised travel itinerary suggestions.', 'AI سے چلنے والی ذاتی نوعیت کی سفری تجاویز۔'), image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop', id: '05', align: 'lg:translate-y-8', tag: t('سياحة', 'Travel', 'سفر') },
-      { title: t('مجموعة التميمي الغذائية', 'Tamimi Food Group', 'التمیمی فوڈ گروپ'), desc: t('إدارة سلاسل الإمداد ومزامنة المخزون باستخدام الذكاء الاصطناعي.', 'AI supply chain management and real-time inventory sync.', 'AI سپلائی چین مینجمنٹ اور ریئل ٹائم انوینٹری سنک۔'), image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop', id: '06', align: 'lg:-translate-y-4', tag: t('غذاء', 'Food & Bev', 'کھانا') },
+      { title: t('العربية للعود الفاخرة', 'Arabian Oud Luxury', 'عریبین عود لگژری'), desc: t('تم الإطلاق في 48 ساعة، زيادة المبيعات 45% باستخدام وكيل AFAQ البصري.', 'Launched in 48h, 45% sales increase using AFAQ Vision Agent.', '48 گھنٹوں میں لانچ، AFAQ ویژن ایجنٹ کا استعمال کرتے ہوئے 45% فروخت میں اضافہ۔'), image: PORTFOLIO_IMAGES['01'], id: '01', align: 'translate-y-0', tag: t('تجارة فاخرة', 'Luxury Retail', 'لگژری ریٹیل') },
+      { title: t('أزياء نون للأناقة', 'Noon Fashion Elegance', 'نون فیشن'), desc: t('تكامل كامل مع زاتكا وبوابات الدفع، رفع معدل التحويل إلى 32%.', 'Full ZATCA & Payment Gateway integration, 32% conversion uplift.', 'مکمل ZATCA اور پیمنٹ گیٹ وے انٹیگریشن، 32% تبدیلی میں اضافہ۔'), image: PORTFOLIO_IMAGES['02'], id: '02', align: 'lg:translate-y-12', tag: t('أزياء', 'Fashion', 'فیشن') },
+      { title: t('منصة ساكو التقنية', 'SACO Tech Platform', 'SACO ٹیک پلیٹ فارم'), desc: t('خوادم سحابية مخصصة للتحمل العالي، بزمن استجابة 200 ملي ثانية.', 'Custom high-load cloud with 200ms response time.', 'کسٹم ہائی لوڈ کلاؤڈ، 200 ملی سیکنڈ ریسپانس ٹائم۔'), image: PORTFOLIO_IMAGES['03'], id: '03', align: 'lg:-translate-y-8', tag: t('تقنية', 'Technology', 'ٹیکنالوجی') },
+      { title: t('تطبيق هوم سنتر', 'Homecentre App', 'ہوم سنٹر ایپ'), desc: t('تطبيق أداء سلس بمسار تسوق مبسط وتحليل سلوكي آني.', 'Streamlined shopping funnel with real-time behavioural analytics.', 'آسان شاپنگ فنل اور ریئل ٹائم رویے کا تجزیہ۔'), image: PORTFOLIO_IMAGES['04'], id: '04', align: 'translate-y-0', tag: t('تجزئة', 'Retail', 'ریٹیل') },
+      { title: t('وكالة الرياض للسفر', 'Riyadh Travel Agency', 'ریاض ٹریول ایجنسی'), desc: t('دمج تقنيات الـ AI لتقديم اقتراحات مخصصة لرحلات العملاء.', 'AI-powered personalised travel itinerary suggestions.', 'AI سے چلنے والی ذاتی نوعیت کی سفری تجاویز۔'), image: PORTFOLIO_IMAGES['05'], id: '05', align: 'lg:translate-y-8', tag: t('سياحة', 'Travel', 'سفر') },
+      { title: t('مجموعة التميمي الغذائية', 'Tamimi Food Group', 'التمیمی فوڈ گروپ'), desc: t('إدارة سلاسل الإمداد ومزامنة المخزون باستخدام الذكاء الاصطناعي.', 'AI supply chain management and real-time inventory sync.', 'AI سپلائی چین مینجمنٹ اور ریئل ٹائم انوینٹری سنک۔'), image: PORTFOLIO_IMAGES['06'], id: '06', align: 'lg:-translate-y-4', tag: t('غذاء', 'Food & Bev', 'کھانا') },
     ],
     [t],
   );
@@ -219,6 +223,7 @@ export default function Page() {
 
         <div className="editorial-divider" />
         <TrustBadges />
+        <BrandsSection />
         <div className="editorial-divider opacity-50" />
 
         {/* ──────────────────── FEATURES ──────────────────── */}
@@ -481,7 +486,7 @@ export default function Page() {
         {/* ──────────────────── CTA ──────────────────── */}
         <section className="py-36 px-6 lg:px-[60px] text-center relative z-10 overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop"
+            src={CTA_BACKGROUND}
             alt=""
             fill
             sizes="100vw"

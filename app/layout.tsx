@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning className={`${inter.variable} ${tajawal.variable} ${playfair.variable} font-ar`}>
+    <html lang="en" dir="ltr" suppressHydrationWarning className={`${inter.variable} ${tajawal.variable} ${playfair.variable} font-en`}>
       <body className="bg-[#050505] text-white antialiased overflow-x-hidden selection:bg-[#165DFF]/30 selection:text-white" suppressHydrationWarning>
         <div className="noise-overlay" />
         <TopographicLines />

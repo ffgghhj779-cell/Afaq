@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Fashion project">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#120818"/>
+      <stop offset="55%" stop-color="#2a1535"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0.25"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="#0a0a0a"/>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <rect x="80" y="120" width="240" height="360" rx="4" fill="#ffffff" opacity="0.04"/>
+  <rect x="360" y="180" width="360" height="8" fill="#ffffff" opacity="0.08"/>
+  <rect x="360" y="220" width="280" height="8" fill="#ffffff" opacity="0.05"/>
+</svg>

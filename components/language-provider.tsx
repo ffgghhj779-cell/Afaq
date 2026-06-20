@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { isRTL, pickTranslation, readStoredLanguage, isLanguage } from '@/lib/i18n';
+import { isRTL, pickTranslation, readStoredLanguage, isLanguage, DEFAULT_LANGUAGE } from '@/lib/i18n';
 
 export type Language = 'ar' | 'en' | 'ur';
 
@@ -32,7 +32,7 @@ function applyDocumentLanguage(language: Language) {
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() =>
-    typeof window !== 'undefined' ? readStoredLanguage() : 'ar',
+    typeof window !== 'undefined' ? readStoredLanguage() : DEFAULT_LANGUAGE,
   );
 
   useEffect(() => {

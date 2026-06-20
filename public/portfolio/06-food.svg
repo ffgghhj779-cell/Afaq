@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Food project">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#101008"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0.28"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="#0a0a0a"/>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <ellipse cx="400" cy="300" rx="220" ry="140" fill="#10B981" opacity="0.08"/>
+  <ellipse cx="400" cy="300" rx="140" ry="90" fill="#ffffff" opacity="0.04"/>
+</svg>

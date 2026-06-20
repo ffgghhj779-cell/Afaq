@@ -66,7 +66,7 @@ export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-          <LanguageSwitcher className="hidden sm:flex" />
+          <LanguageSwitcher className="hidden md:flex" />
 
           {/* AI Button */}
           <motion.button
@@ -111,7 +111,12 @@ export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
               aria-modal="true"
               aria-label={t('القائمة', 'Navigation menu', 'نیویگیشن')}
             >
-              <nav className="flex flex-col px-5 py-4 gap-0.5">
+              <div className="px-5 pt-4 pb-5 border-b border-white/5">
+                <p className="small-caps text-[#555] mb-3 px-1">{t('اللغة', 'Language', 'زبان')}</p>
+                <LanguageSwitcher onSelect={closeMobile} layout="mobile" />
+              </div>
+
+              <nav className="flex flex-col px-5 py-4 gap-0.5 flex-1 overflow-y-auto">
                 {navLinks.map((link) => (
                   <motion.div key={link.href} {...mobileNavItem}>
                     <Link
@@ -124,11 +129,6 @@ export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
                   </motion.div>
                 ))}
               </nav>
-
-              <div className="px-5 mt-auto pb-10 pt-6 border-t border-white/5">
-                <p className="small-caps text-[#444] mb-3 px-1">{t('اللغة', 'Language', 'زبان')}</p>
-                <LanguageSwitcher onSelect={closeMobile} layout="mobile" />
-              </div>
             </motion.div>
           </>
         )}

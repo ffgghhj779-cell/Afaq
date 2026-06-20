@@ -1,5 +1,7 @@
 import type { Language } from '@/components/language-provider';
 
+export const DEFAULT_LANGUAGE: Language = 'en';
+
 export const LANGUAGES: Language[] = ['ar', 'en', 'ur'];
 
 export const LANGUAGE_LABELS: Record<Language, string> = {
@@ -41,7 +43,7 @@ export function pickTranslation(
 }
 
 export function readStoredLanguage(): Language {
-  if (typeof window === 'undefined') return 'ar';
+  if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
   const stored = localStorage.getItem('afaq-lang');
-  return stored && isLanguage(stored) ? stored : 'ar';
+  return stored && isLanguage(stored) ? stored : DEFAULT_LANGUAGE;
 }

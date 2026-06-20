@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Retail project">
+  <defs>
+    <linearGradient id="g" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#101010"/>
+      <stop offset="100%" stop-color="#1c2a1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="#0a0a0a"/>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <g fill="#ffffff" opacity="0.06">
+    <rect x="100" y="140" width="160" height="120"/><rect x="300" y="140" width="160" height="120"/>
+    <rect x="500" y="140" width="160" height="120"/><rect x="100" y="300" width="160" height="120"/>
+    <rect x="300" y="300" width="160" height="120"/><rect x="500" y="300" width="160" height="120"/>
+  </g>
+</svg>
