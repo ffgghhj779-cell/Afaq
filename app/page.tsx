@@ -1,40 +1,56 @@
 'use client';
 
 import Link from "next/link";
-import { useState } from "react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useState, useCallback, useMemo } from "react";
 import { PlayCircle, ArrowLeft, ShieldCheck, Cpu, Code, Layers, Star, Plus, TrendingUp, Clock, Globe } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { TrustBadges } from "@/components/trust-badges";
-import { RoiCalculator } from "@/components/roi-calculator";
-import { TelemetryBar } from "@/components/telemetry";
-import { AIAssistant } from "@/components/ai-assistant";
+import { PortfolioCard } from "@/components/portfolio-card";
 import { motion } from "motion/react";
 import { useLanguage } from "@/components/language-provider";
+import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15 }
-  }
-};
+const AIAssistant = dynamic(
+  () => import("@/components/ai-assistant").then((m) => ({ default: m.AIAssistant })),
+  { ssr: false },
+);
+const RoiCalculator = dynamic(
+  () => import("@/components/roi-calculator").then((m) => ({ default: m.RoiCalculator })),
+  { loading: () => <div className="h-96" aria-hidden /> },
+);
+const TelemetryBar = dynamic(
+  () => import("@/components/telemetry").then((m) => ({ default: m.TelemetryBar })),
+);
+const TrustBadges = dynamic(
+  () => import("@/components/trust-badges").then((m) => ({ default: m.TrustBadges })),
+);
 
 export default function Page() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [aiOpen, setAiOpen] = useState(false);
+  const openAI = useCallback(() => setAiOpen(true), []);
+  const closeAI = useCallback(() => setAiOpen(false), []);
+
+  const projects = useMemo(
+    () => [
+      { title: t('العربية للعود الفاخرة', 'Arabian Oud Luxury', 'عریبین عود لگژری'), desc: t('تم الإطلاق في 48 ساعة، زيادة المبيعات 45% باستخدام وكيل AFAQ البصري.', 'Launched in 48h, 45% sales increase using AFAQ Vision Agent.', '48 گھنٹوں میں لانچ، AFAQ ویژن ایجنٹ کا استعمال کرتے ہوئے 45% فروخت میں اضافہ۔'), image: 'https://images.unsplash.com/photo-1595425970377-c9703c48657a?q=80&w=800&auto=format&fit=crop', id: '01', align: 'translate-y-0', tag: t('تجارة فاخرة', 'Luxury Retail', 'لگژری ریٹیل') },
+      { title: t('أزياء نون للأناقة', 'Noon Fashion Elegance', 'نون فیشن'), desc: t('تكامل كامل مع زاتكا وبوابات الدفع، رفع معدل التحويل إلى 32%.', 'Full ZATCA & Payment Gateway integration, 32% conversion uplift.', 'مکمل ZATCA اور پیمنٹ گیٹ وے انٹیگریشن، 32% تبدیلی میں اضافہ۔'), image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=800&auto=format&fit=crop', id: '02', align: 'lg:translate-y-12', tag: t('أزياء', 'Fashion', 'فیشن') },
+      { title: t('منصة ساكو التقنية', 'SACO Tech Platform', 'SACO ٹیک پلیٹ فارم'), desc: t('خوادم سحابية مخصصة للتحمل العالي، بزمن استجابة 200 ملي ثانية.', 'Custom high-load cloud with 200ms response time.', 'کسٹم ہائی لوڈ کلاؤڈ، 200 ملی سیکنڈ ریسپانس ٹائم۔'), image: 'https://images.unsplash.com/photo-1550009158-9ffcb5e4d284?q=80&w=800&auto=format&fit=crop', id: '03', align: 'lg:-translate-y-8', tag: t('تقنية', 'Technology', 'ٹیکنالوجی') },
+      { title: t('تطبيق هوم سنتر', 'Homecentre App', 'ہوم سنٹر ایپ'), desc: t('تطبيق أداء سلس بمسار تسوق مبسط وتحليل سلوكي آني.', 'Streamlined shopping funnel with real-time behavioural analytics.', 'آسان شاپنگ فنل اور ریئل ٹائم رویے کا تجزیہ۔'), image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?q=80&w=800&auto=format&fit=crop', id: '04', align: 'translate-y-0', tag: t('تجزئة', 'Retail', 'ریٹیل') },
+      { title: t('وكالة الرياض للسفر', 'Riyadh Travel Agency', 'ریاض ٹریول ایجنسی'), desc: t('دمج تقنيات الـ AI لتقديم اقتراحات مخصصة لرحلات العملاء.', 'AI-powered personalised travel itinerary suggestions.', 'AI سے چلنے والی ذاتی نوعیت کی سفری تجاویز۔'), image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop', id: '05', align: 'lg:translate-y-8', tag: t('سياحة', 'Travel', 'سفر') },
+      { title: t('مجموعة التميمي الغذائية', 'Tamimi Food Group', 'التمیمی فوڈ گروپ'), desc: t('إدارة سلاسل الإمداد ومزامنة المخزون باستخدام الذكاء الاصطناعي.', 'AI supply chain management and real-time inventory sync.', 'AI سپلائی چین مینجمنٹ اور ریئل ٹائم انوینٹری سنک۔'), image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop', id: '06', align: 'lg:-translate-y-4', tag: t('غذاء', 'Food & Bev', 'کھانا') },
+    ],
+    [t],
+  );
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f0f0f0] flex flex-col overflow-x-hidden selection:bg-[#165DFF]/30 relative">
       <div className="mesh-bg" />
-      <Navbar onAIOpen={() => setAiOpen(true)} />
+      <Navbar onAIOpen={openAI} />
       <TelemetryBar />
-      <AIAssistant open={aiOpen} onClose={() => setAiOpen(false)} />
+      {aiOpen ? <AIAssistant open={aiOpen} onClose={closeAI} /> : null}
 
       <main className="flex-1 flex flex-col">
 
@@ -58,7 +74,6 @@ export default function Page() {
               variants={fadeUp}
               className="font-[family-name:var(--font-serif)] text-[clamp(56px,8vw,110px)] leading-[1.05] tracking-tighter font-extralight text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-gray-600 mb-8 relative"
             >
-              <span className="absolute -inset-2 opacity-15 blur-3xl block bg-[#165DFF] rounded-full z-[-1]" />
               {t('أفق نحو', 'Horizon to', 'مستقبل کی طرف')}<br />
               <span className="font-bold text-white">{t('المستقبل.', 'the future.', 'افق۔')}</span>
             </motion.h1>
@@ -121,7 +136,7 @@ export default function Page() {
               {/* Cell B: Daily Processing */}
               <motion.div
                 variants={fadeUp}
-                className="stat-card glass-panel group hover:-translate-y-1 transition-all duration-700 relative overflow-hidden"
+                className="stat-card glass-panel group hover:-translate-y-1 transition-transform duration-500 relative overflow-hidden"
               >
                 <div className="flex items-start justify-between mb-4">
                   <TrendingUp className="w-5 h-5 text-[#10B981] opacity-70" />
@@ -138,7 +153,7 @@ export default function Page() {
               {/* Cell C: Reliability */}
               <motion.div
                 variants={fadeUp}
-                className="stat-card glass-panel group hover:-translate-y-1 transition-all duration-700 lg:-translate-y-6"
+                className="stat-card glass-panel group hover:-translate-y-1 transition-transform duration-500 lg:-translate-y-6"
               >
                 <div className="flex items-start justify-between mb-4">
                   <ShieldCheck className="w-5 h-5 text-[#165DFF] opacity-70" />
@@ -177,7 +192,7 @@ export default function Page() {
               {/* Cell E: Response Time */}
               <motion.div
                 variants={fadeUp}
-                className="stat-card glass-panel group hover:-translate-y-1 transition-all duration-700"
+                className="stat-card glass-panel group hover:-translate-y-1 transition-transform duration-500"
               >
                 <Clock className="w-5 h-5 text-[#165DFF]/50 mb-3" />
                 <div className="small-caps mb-2 text-[#555]">TTFB</div>
@@ -190,7 +205,7 @@ export default function Page() {
               {/* Cell F: Passwordless */}
               <motion.div
                 variants={fadeUp}
-                className="stat-card glass-panel group hover:-translate-y-1 transition-all duration-700 lg:-translate-y-3"
+                className="stat-card glass-panel group hover:-translate-y-1 transition-transform duration-500 lg:-translate-y-3"
               >
                 <Code className="w-5 h-5 text-[#10B981]/50 mb-3" />
                 <div className="small-caps mb-2 text-[#555]">{t('دخول', 'AUTH', 'توثیق')}</div>
@@ -210,7 +225,7 @@ export default function Page() {
         <section className="py-32 px-6 lg:px-[60px] relative z-10">
           <motion.div
             className="max-w-[1200px] mx-auto"
-            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
+            initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}
           >
             <motion.div variants={fadeUp} className="small-caps-primary mb-4 tracking-[0.4em]">{t('المميزات الأساسية', 'CORE FEATURES', 'بنیادی خصوصیات')}</motion.div>
             <motion.h2 variants={fadeUp} className="font-[family-name:var(--font-serif)] text-[clamp(40px,5vw,70px)] mb-20 tracking-tighter font-extralight text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-500">
@@ -276,7 +291,7 @@ export default function Page() {
           <div className="absolute inset-0 bg-[#165DFF]/[0.025] pointer-events-none" />
           <motion.div
             className="max-w-[1200px] mx-auto relative z-10"
-            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
+            initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}
           >
             <div className="text-center mb-24">
               <motion.div variants={fadeUp} className="small-caps-primary mb-6 mx-auto tracking-[0.4em]">{t('الاستثمار', 'INVESTMENT', 'سرمایہ کاری')}</motion.div>
@@ -367,7 +382,7 @@ export default function Page() {
         <section className="py-32 px-6 lg:px-[60px] relative z-10">
           <motion.div
             className="max-w-[1200px] mx-auto"
-            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
+            initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}
           >
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-20 gap-8">
               <motion.div variants={fadeUp}>
@@ -384,34 +399,8 @@ export default function Page() {
             </div>
 
             <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-              {[
-                { title: t('العربية للعود الفاخرة', 'Arabian Oud Luxury', 'عریبین عود لگژری'), desc: t('تم الإطلاق في 48 ساعة، زيادة المبيعات 45% باستخدام وكيل AFAQ البصري.', 'Launched in 48h, 45% sales increase using AFAQ Vision Agent.', '48 گھنٹوں میں لانچ، AFAQ ویژن ایجنٹ کا استعمال کرتے ہوئے 45% فروخت میں اضافہ۔'), image: 'https://images.unsplash.com/photo-1595425970377-c9703c48657a?q=80&w=800&auto=format&fit=crop', id: '01', align: 'translate-y-0', tag: t('تجارة فاخرة', 'Luxury Retail', 'لگژری ریٹیل') },
-                { title: t('أزياء نون للأناقة', 'Noon Fashion Elegance', 'نون فیشن'), desc: t('تكامل كامل مع زاتكا وبوابات الدفع، رفع معدل التحويل إلى 32%.', 'Full ZATCA & Payment Gateway integration, 32% conversion uplift.', 'مکمل ZATCA اور پیمنٹ گیٹ وے انٹیگریشن، 32% تبدیلی میں اضافہ۔'), image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=800&auto=format&fit=crop', id: '02', align: 'lg:translate-y-12', tag: t('أزياء', 'Fashion', 'فیشن') },
-                { title: t('منصة ساكو التقنية', 'SACO Tech Platform', 'SACO ٹیک پلیٹ فارم'), desc: t('خوادم سحابية مخصصة للتحمل العالي، بزمن استجابة 200 ملي ثانية.', 'Custom high-load cloud with 200ms response time.', 'کسٹم ہائی لوڈ کلاؤڈ، 200 ملی سیکنڈ ریسپانس ٹائم۔'), image: 'https://images.unsplash.com/photo-1550009158-9ffcb5e4d284?q=80&w=800&auto=format&fit=crop', id: '03', align: 'lg:-translate-y-8', tag: t('تقنية', 'Technology', 'ٹیکنالوجی') },
-                { title: t('تطبيق هوم سنتر', 'Homecentre App', 'ہوم سنٹر ایپ'), desc: t('تطبيق أداء سلس بمسار تسوق مبسط وتحليل سلوكي آني.', 'Streamlined shopping funnel with real-time behavioural analytics.', 'آسان شاپنگ فنل اور ریئل ٹائم رویے کا تجزیہ۔'), image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?q=80&w=800&auto=format&fit=crop', id: '04', align: 'translate-y-0', tag: t('تجزئة', 'Retail', 'ریٹیل') },
-                { title: t('وكالة الرياض للسفر', 'Riyadh Travel Agency', 'ریاض ٹریول ایجنسی'), desc: t('دمج تقنيات الـ AI لتقديم اقتراحات مخصصة لرحلات العملاء.', 'AI-powered personalised travel itinerary suggestions.', 'AI سے چلنے والی ذاتی نوعیت کی سفری تجاویز۔'), image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop', id: '05', align: 'lg:translate-y-8', tag: t('سياحة', 'Travel', 'سفر') },
-                { title: t('مجموعة التميمي الغذائية', 'Tamimi Food Group', 'التمیمی فوڈ گروپ'), desc: t('إدارة سلاسل الإمداد ومزامنة المخزون باستخدام الذكاء الاصطناعي.', 'AI supply chain management and real-time inventory sync.', 'AI سپلائی چین مینجمنٹ اور ریئل ٹائم انوینٹری سنک۔'), image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop', id: '06', align: 'lg:-translate-y-4', tag: t('غذاء', 'Food & Bev', 'کھانا') },
-              ].map((project, i) => (
-                <motion.div key={i} variants={fadeUp} className={`group cursor-pointer ${project.align} transition-transform duration-[1.5s] ease-out`}>
-                  <div className="h-72 w-full glass-panel relative overflow-hidden mb-6 transition-all duration-700 group-hover:scale-[1.02] group-hover:shadow-[0_20px_50px_-10px_rgba(22,93,255,0.35)]">
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-[2s] group-hover:scale-110 opacity-50 group-hover:opacity-80 grayscale group-hover:grayscale-0"
-                      style={{ backgroundImage: `url('${project.image}')` }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-700" />
-                    <div className="absolute top-4 rtl:right-4 ltr:left-4">
-                      <span className="text-[9px] bg-[#050505]/80 border border-white/10 backdrop-blur-md px-3 py-1 text-[#888] tracking-widest uppercase">{project.tag}</span>
-                    </div>
-                    <div className="absolute bottom-5 rtl:right-5 rtl:left-5 ltr:left-5 ltr:right-5 flex justify-between items-end">
-                      <div className="text-[#165DFF]/40 font-mono text-4xl group-hover:text-[#165DFF]/80 transition-colors duration-500 font-bold">{project.id}</div>
-                      <div className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-[#165DFF] group-hover:border-[#165DFF] transition-all duration-500">
-                        <ArrowLeft className="w-3.5 h-3.5 text-white rtl:-rotate-45 ltr:-rotate-135 rtl:group-hover:rotate-0 ltr:group-hover:rotate-180 transition-transform duration-500" />
-                      </div>
-                    </div>
-                  </div>
-                  <h4 className="text-lg font-medium mb-2 group-hover:text-[#165DFF] transition-colors duration-300">{project.title}</h4>
-                  <div className="text-sm text-[#666] leading-[1.8] group-hover:text-[#999] transition-colors font-light">{project.desc}</div>
-                </motion.div>
+              {projects.map((project, i) => (
+                <PortfolioCard key={project.id} {...project} priority={i < 2} />
               ))}
             </motion.div>
           </motion.div>
@@ -425,7 +414,7 @@ export default function Page() {
             {/* Testimonials */}
             <motion.div
               className="py-28 px-6 lg:px-[60px] flex-1 relative"
-              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
+              initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}
             >
               <motion.div variants={fadeUp} className="small-caps-primary mb-4 tracking-[0.4em]">{t('آراء العملاء', 'TESTIMONIALS', 'کلائنٹ کی آراء')}</motion.div>
               <motion.h2 variants={fadeUp} className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl mb-14 tracking-tighter font-extralight text-transparent bg-clip-text bg-gradient-to-tr from-white to-gray-500">
@@ -456,7 +445,7 @@ export default function Page() {
             {/* FAQ */}
             <motion.div
               className="py-28 px-6 lg:px-[60px] flex-1 bg-[#165DFF]/[0.015] relative"
-              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
+              initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}
             >
               <motion.div variants={fadeUp} className="small-caps-primary mb-4 tracking-[0.4em]">{t('الأسئلة الشائعة', 'FAQ', 'اکثر پوچھے گئے سوالات')}</motion.div>
               <motion.h2 variants={fadeUp} className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl mb-14 tracking-tighter font-extralight text-transparent bg-clip-text bg-gradient-to-tr from-white to-gray-500">
@@ -477,7 +466,7 @@ export default function Page() {
                     a: t("يستغرق الإعداد الأساسي بين أسبوعين إلى 4 أسابيع حسب تعقيد متطلبات التكامل.", "Basic setup takes 2–4 weeks depending on integration complexity.", "بنیادی سیٹ اپ انٹیگریشن کی پیچیدگی کے لحاظ سے 2-4 ہفتے لیتا ہے۔")
                   },
                 ].map((item, idx) => (
-                  <motion.div key={idx} variants={fadeUp} className="border-b border-white/8 pb-5 rtl:hover:pr-3 ltr:hover:pl-3 transition-all duration-300 cursor-pointer group">
+                  <motion.div key={idx} variants={fadeUp} className="border-b border-white/8 pb-5 rtl:hover:pr-3 ltr:hover:pl-3 transition-[padding] duration-300 cursor-pointer group">
                     <h4 className="text-lg font-[family-name:var(--font-serif)] mb-2 text-[#ddd] group-hover:text-[#165DFF] transition-colors">{item.q}</h4>
                     <p className="text-sm text-[#666] leading-[1.8] font-light max-w-[90%]">{item.a}</p>
                   </motion.div>
@@ -490,12 +479,21 @@ export default function Page() {
         <div className="editorial-divider" />
 
         {/* ──────────────────── CTA ──────────────────── */}
-        <section className="py-36 px-6 lg:px-[60px] text-center relative z-10 overflow-hidden bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-fixed">
-          <div className="absolute inset-0 bg-[#050505]/92 backdrop-blur-sm" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]" />
+        <section className="py-36 px-6 lg:px-[60px] text-center relative z-10 overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop"
+            alt=""
+            fill
+            sizes="100vw"
+            loading="lazy"
+            className="object-cover object-center -z-20"
+            aria-hidden
+          />
+          <div className="absolute inset-0 bg-[#050505]/92 -z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505] -z-10" />
           <motion.div
             className="relative z-10 max-w-[800px] mx-auto"
-            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
+            initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}
           >
             <motion.h2 variants={fadeUp} className="font-[family-name:var(--font-serif)] text-[clamp(50px,9vw,110px)] mb-8 tracking-tighter font-extralight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-[0_0_50px_rgba(255,255,255,0.08)]">
               {t('هل أنت جاهز؟', 'Are you ready?', 'کیا آپ تیار ہیں؟')}

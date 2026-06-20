@@ -21,14 +21,14 @@ body {
 
 .glass-panel {
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
-  backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(120%);
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 30px 60px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .glass-dark {
   background: rgba(22, 93, 255, 0.03);
-  backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(120%);
   border: 1px solid rgba(22, 93, 255, 0.15);
   box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(22, 93, 255, 0.2);
 }
@@ -37,10 +37,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 32px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0) 100%);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
   position: relative;
   overflow: hidden;
+  will-change: transform;
 }
 
 .stat-card::before {
@@ -61,7 +62,6 @@ body {
 .stat-card:hover {
   transform: translateY(-4px) scale(1.01);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 100%);
-  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8), 0 0 40px -10px rgba(22, 93, 255, 0.1);
   border-color: rgba(255,255,255,0.1);
 }
 
@@ -77,7 +77,7 @@ body {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
   box-shadow: 0 10px 20px -10px rgba(255,255,255,0.3);
   position: relative;
   overflow: hidden;
@@ -115,7 +115,7 @@ body {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
   background: rgba(255,255,255,0.02);
   backdrop-filter: blur(10px);
   position: relative;
@@ -142,7 +142,7 @@ body {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
   box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.4);
   position: relative;
   overflow: hidden;
@@ -181,9 +181,12 @@ body {
     radial-gradient(at 30% 10%, rgba(22, 93, 255, 0.05) 0px, transparent 40%),
     radial-gradient(at 80% 0%, rgba(255, 255, 255, 0.02) 0px, transparent 40%),
     radial-gradient(at 0% 60%, rgba(22, 93, 255, 0.03) 0px, transparent 60%);
-  filter: blur(80px);
-  opacity: 0.8;
-  animation: breathe 15s ease-in-out infinite alternate;
+  opacity: 0.75;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 0.85; }
 }
 
 .noise-overlay {
@@ -225,10 +228,12 @@ body {
 
 html[dir="ltr"] .animate-marquee {
   animation: marquee-ltr 30s linear infinite;
+  will-change: transform;
 }
 
 html[dir="rtl"] .animate-marquee {
   animation: marquee-rtl 30s linear infinite;
+  will-change: transform;
 }
 
 .font-ar {
@@ -291,13 +296,13 @@ html[lang="ar"] .tracking-widest {
 .bento-cell {
   position: relative;
   overflow: hidden;
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
 .bento-cell:hover {
   z-index: 2;
   transform: scale(1.015) translateY(-4px);
-  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.9), 0 0 50px -15px rgba(22,93,255,0.15);
 }
 
 /* ─── Status Indicator (Emerald dot) ─────────────────────── */
@@ -311,8 +316,8 @@ html[lang="ar"] .tracking-widest {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); }
-  50% { opacity: 0.6; box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.92); }
 }
 
 /* ─── Glow badge ─────────────────────────────────────────── */
@@ -347,19 +352,12 @@ html[lang="ar"] .tracking-widest {
   animation: shimmer 4s linear infinite;
 }
 
-/* ─── Glow ring on hover for stat cards ─────────────────── */
-.stat-card:hover {
-  transform: translateY(-4px) scale(1.01);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 100%);
-  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8), 0 0 50px -15px rgba(22, 93, 255, 0.12), inset 0 1px 0 rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.1);
-}
+/* ─── Glow ring on hover for stat cards (duplicate removed — see .stat-card:hover) ─── */
 
 /* ─── Glow pill ──────────────────────────────────────────── */
 .glass-pill:hover {
   background: rgba(22, 93, 255, 0.08);
   border-color: rgba(22, 93, 255, 0.35);
-  box-shadow: 0 0 30px rgba(22, 93, 255, 0.25);
   transform: translateY(-1px);
 }
 

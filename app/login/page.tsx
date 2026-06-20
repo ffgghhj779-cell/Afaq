@@ -10,16 +10,7 @@ import { Footer } from "@/components/footer";
 import { useLanguage } from "@/components/language-provider";
 import { sendOtp, verifyOtp, initiateNafath, oauthLogin } from "@/lib/auth-api";
 import { ApiError } from "@/lib/api-client";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24, filter: "blur(8px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
-};
+import { fadeUpFast as fadeUp, staggerContainer } from "@/lib/motion";
 
 type AuthStep = 'method' | 'phone' | 'otp' | 'nafath' | 'nafath-pending';
 

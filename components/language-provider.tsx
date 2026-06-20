@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 export type Language = 'ar' | 'en' | 'ur';
 
@@ -15,19 +15,15 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('ar');
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const storedLang = localStorage.getItem('afaq-lang') as Language;
     if (storedLang && ['ar', 'en', 'ur'].includes(storedLang)) {
       setLanguageState(storedLang);
     }
-    setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
-
     const isRTL = language === 'ar' || language === 'ur';
     document.documentElement.lang = language;
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
@@ -37,27 +33,33 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     if (language === 'en') {
       document.documentElement.classList.add('font-en');
     } else {
-      document.documentElement.classList.add('font-ar'); // Tajawal covers Arabic & Urdu
+      document.documentElement.classList.add('font-ar');
     }
-  }, [language, mounted]);
+  }, [language]);
 
-  const setLanguage = (lang: Language) => {
+  const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
-  };
+  }, []);
 
-  const t = (arText: string, enText: string, urText?: string): string => {
-    if (language === 'ar') return arText;
-    if (language === 'ur') return urText ?? arText;
-    return enText;
-  };
+  const t = useCallback(
+    (arText: string, enText: string, urText?: string): string => {
+      if (language === 'ar') return arText;
+      if (language === 'ur') return urText ?? arText;
+      return enText;
+    },
+    [language],
+  );
 
   const isRTL = language === 'ar' || language === 'ur';
 
+  const value = useMemo(
+    () => ({ language, setLanguage, t, isRTL }),
+    [language, setLanguage, t, isRTL],
+  );
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, isRTL }}>
-      <div style={{ opacity: mounted ? 1 : 0, transition: 'opacity 0.15s' }}>
-        {children}
-      </div>
+    <LanguageContext.Provider value={value}>
+      {children}
     </LanguageContext.Provider>
   );
 }

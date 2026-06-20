@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Zap, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { memo, useState, useCallback, useMemo } from "react";
 import { useLanguage, Language } from "./language-provider";
+import { slideDown } from "@/lib/motion";
 
 const LANG_CYCLE: Language[] = ['ar', 'en', 'ur'];
 const LANG_LABELS: Record<Language, string> = { ar: 'AR', en: 'EN', ur: 'UR' };
@@ -21,23 +22,34 @@ interface NavbarProps {
   onAIOpen?: () => void;
 }
 
-export function Navbar({ onAIOpen }: NavbarProps) {
+export const Navbar = memo(function Navbar({ onAIOpen }: NavbarProps) {
   const { language, setLanguage, t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const cycleLanguage = () => {
+  const cycleLanguage = useCallback(() => {
     const idx = LANG_CYCLE.indexOf(language);
-    const next = LANG_CYCLE[(idx + 1) % LANG_CYCLE.length];
-    setLanguage(next);
-  };
+    setLanguage(LANG_CYCLE[(idx + 1) % LANG_CYCLE.length]);
+  }, [language, setLanguage]);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
+  const toggleMobile = useCallback(() => setMobileOpen((v) => !v), []);
+
+  const drawerFromRight = language === 'ar' || language === 'ur';
+  const drawerMotion = useMemo(
+    () => ({
+      initial: { opacity: 0, x: drawerFromRight ? 320 : -320 },
+      animate: { opacity: 1, x: 0 },
+      exit: { opacity: 0, x: drawerFromRight ? 320 : -320 },
+      transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] as const },
+    }),
+    [drawerFromRight],
+  );
 
   return (
     <>
       <motion.nav
         className="h-[72px] flex items-center justify-between px-5 md:px-[60px] border-b border-white/5 shrink-0 bg-[#050505]/70 backdrop-blur-xl sticky top-0 z-50 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.9)]"
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        {...slideDown}
       >
         {/* Logo */}
         <Link
@@ -78,7 +90,7 @@ export function Navbar({ onAIOpen }: NavbarProps) {
             onClick={onAIOpen}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
-            className="glass-pill flex items-center gap-2 group shadow-[0_0_15px_rgba(22,93,255,0.15)] hover:shadow-[0_0_30px_rgba(22,93,255,0.4)] transition-all duration-300"
+            className="glass-pill flex items-center gap-2 group transition-transform duration-300"
           >
             <Zap className="w-3 h-3 text-[#165DFF] group-hover:animate-pulse flex-shrink-0" />
             <span className="hidden sm:inline">{t('المساعدة الذكية', 'AI Assistant', 'AI معاون')}</span>
@@ -88,7 +100,7 @@ export function Navbar({ onAIOpen }: NavbarProps) {
           {/* Mobile Hamburger */}
           <motion.button
             className="md:hidden w-9 h-9 flex items-center justify-center text-white/80 hover:text-white transition-colors"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={toggleMobile}
             whileTap={{ scale: 0.9 }}
             aria-label="Toggle mobile menu"
           >
@@ -108,16 +120,13 @@ export function Navbar({ onAIOpen }: NavbarProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
-              onClick={() => setMobileOpen(false)}
+              onClick={closeMobile}
             />
 
             {/* Drawer Panel */}
             <motion.div
-              initial={{ x: language === 'ar' || language === 'ur' ? '100%' : '-100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: language === 'ar' || language === 'ur' ? '100%' : '-100%', opacity: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed top-0 bottom-0 rtl:right-0 ltr:left-0 w-[75vw] max-w-[320px] bg-[#080808] border-l border-r border-white/5 z-50 md:hidden flex flex-col pt-[72px]"
+              {...drawerMotion}
+              className="fixed top-0 bottom-0 rtl:right-0 ltr:left-0 w-[75vw] max-w-[320px] bg-[#080808] border-l border-r border-white/5 z-50 md:hidden flex flex-col pt-[72px] will-change-transform"
             >
               <nav className="flex flex-col p-8 gap-1">
                 {navLinks.map((link, i) => (
@@ -129,7 +138,7 @@ export function Navbar({ onAIOpen }: NavbarProps) {
                   >
                     <Link
                       href={link.href}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={closeMobile}
                       className="flex items-center py-4 text-[#aaa] hover:text-[#165DFF] transition-colors duration-200 border-b border-white/5 text-sm tracking-widest uppercase"
                     >
                       {language === 'ar' ? link.ar : language === 'ur' ? link.ur : link.en}
@@ -145,7 +154,7 @@ export function Navbar({ onAIOpen }: NavbarProps) {
                   {LANG_CYCLE.map((lang) => (
                     <button
                       key={lang}
-                      onClick={() => { setLanguage(lang); setMobileOpen(false); }}
+                      onClick={() => { setLanguage(lang); closeMobile(); }}
                       className={`px-4 py-2 text-xs tracking-widest uppercase transition-all duration-200 border ${
                         language === lang
                           ? 'border-[#165DFF] text-[#165DFF] bg-[#165DFF]/10'
@@ -163,4 +172,4 @@ export function Navbar({ onAIOpen }: NavbarProps) {
       </AnimatePresence>
     </>
   );
-}
+});

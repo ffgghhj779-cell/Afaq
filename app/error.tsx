@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { RefreshCw, Home } from "lucide-react";
+import { fadeUpFast } from "@/lib/motion";
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -20,9 +21,9 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        initial="hidden"
+        animate="visible"
+        variants={fadeUpFast}
         className="relative z-10 text-center px-6 max-w-[600px]"
       >
         <div className="small-caps mb-6 tracking-[0.5em] text-red-500/70">ERROR — SOMETHING WENT WRONG</div>

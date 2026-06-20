@@ -8,21 +8,7 @@ import { motion } from "motion/react";
 import { useLanguage } from "@/components/language-provider";
 import { submitContact } from "@/lib/commerce-api";
 import { ApiError } from "@/lib/api-client";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.8 } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15
-    }
-  }
-};
+import { fadeUp, staggerContainer } from "@/lib/motion";
 
 export default function ContactPage() {
   const { t, language } = useLanguage();

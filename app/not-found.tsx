@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowLeft, Home } from "lucide-react";
+import { fadeUpFast } from "@/lib/motion";
 
 export default function NotFound() {
   return (
@@ -16,9 +17,9 @@ export default function NotFound() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        initial="hidden"
+        animate="visible"
+        variants={fadeUpFast}
         className="relative z-10 text-center px-6 max-w-[600px]"
       >
         <div className="small-caps-primary mb-6 tracking-[0.5em]">404 — NOT FOUND</div>

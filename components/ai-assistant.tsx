@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Send, Zap, Bot, User, Loader } from "lucide-react";
 import { useLanguage } from "./language-provider";
@@ -35,7 +35,7 @@ interface AIAssistantProps {
   onClose: () => void;
 }
 
-export function AIAssistant({ open, onClose }: AIAssistantProps) {
+export const AIAssistant = memo(function AIAssistant({ open, onClose }: AIAssistantProps) {
   const { t, language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -54,7 +54,7 @@ export function AIAssistant({ open, onClose }: AIAssistantProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = useCallback(async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || loading) return;
 
@@ -82,7 +82,7 @@ export function AIAssistant({ open, onClose }: AIAssistantProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [language, loading, sessionId, t]);
 
   const prompts = SUGGESTED_PROMPTS[language] ?? SUGGESTED_PROMPTS.ar;
   const isEmpty = messages.length === 0;
@@ -95,7 +95,7 @@ export function AIAssistant({ open, onClose }: AIAssistantProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
+            className="fixed inset-0 bg-black/60 z-[60]"
             onClick={onClose}
           />
 
@@ -103,7 +103,7 @@ export function AIAssistant({ open, onClose }: AIAssistantProps) {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] as const }}
             className="fixed bottom-6 rtl:left-6 ltr:right-6 w-[calc(100vw-48px)] max-w-[420px] z-[70] flex flex-col"
             style={{ maxHeight: 'calc(100vh - 48px)' }}
           >
@@ -243,4 +243,4 @@ export function AIAssistant({ open, onClose }: AIAssistantProps) {
       )}
     </AnimatePresence>
   );
-}
+});
