@@ -40,4 +40,30 @@ export const slidePanel = (fromRight: boolean) => ({
   exit: { opacity: 0, x: fromRight ? 320 : -320, transition: { duration: 0.25, ease: EASE_OUT } },
 });
 
+/** Mobile drawer — GPU-only (opacity + translateX), instant feel */
+export const mobileDrawer = (fromRight: boolean) => ({
+  initial: { opacity: 0, x: fromRight ? '100%' : '-100%' },
+  animate: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.22, ease: EASE_OUT },
+  },
+  exit: {
+    opacity: 0,
+    x: fromRight ? '100%' : '-100%',
+    transition: { duration: 0.18, ease: EASE_OUT },
+  },
+});
+
+export const mobileOverlay = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.18 } },
+  exit: { opacity: 0, transition: { duration: 0.15 } },
+};
+
+export const mobileNavItem = {
+  initial: { opacity: 0, x: 12 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.2, ease: EASE_OUT } },
+};
+
 export const viewportOnce = { once: true, margin: '-80px' as const };

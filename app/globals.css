@@ -163,7 +163,10 @@ body {
   letter-spacing: 1px;
   text-transform: uppercase;
   backdrop-filter: blur(20px);
-  transition: all 0.4s ease;
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .glass-pill:hover {
@@ -366,4 +369,53 @@ html[lang="ar"] .tracking-widest {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* ─── Brand lockup (navbar) ──────────────────────────────── */
+.brand-slogan {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.42);
+  line-height: 1.2;
+}
+
+html[lang="ar"] .brand-slogan,
+html[lang="ur"] .brand-slogan {
+  font-family: var(--font-tajawal), sans-serif;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+html[lang="en"] .brand-slogan {
+  font-family: var(--font-inter), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 400;
+}
+
+@media (min-width: 640px) {
+  .brand-slogan {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* ─── Mobile GPU & touch utilities ───────────────────────── */
+.gpu-motion {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.menu-open {
+  overflow: hidden;
+  touch-action: none;
+}
 
